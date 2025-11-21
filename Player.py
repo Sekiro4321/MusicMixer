@@ -1,9 +1,9 @@
 import os
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
 import pygame
+import random
 
 def play_music(folder,mp3_list,index):
-
     while True:
         song_name = mp3_list[index]
         file_path = os.path.join(folder, song_name)  
@@ -15,13 +15,13 @@ def play_music(folder,mp3_list,index):
         pygame.mixer.music.load(file_path)
         pygame.mixer.music.play() 
 
-        print(f"Now Playing: {song_name}")
-        print(f"Commands: [P]ause ,[R]esume, [S]top, [C #]=Change, [N]ext, [P]revious")
+        print(f"Now Playing: {index+1}. {song_name}")
+        print(f"Commands: [P]ause ,[R]esume, [S]top, [C #]=Change, [N]ext, [P]revious, [M]=Random play")
 
         while True:
 
             comm = input("> ").upper()
-
+            flag = 1
             if comm == "P":
                 pygame.mixer.music.pause()
                 print(f"Paused {song_name}")
@@ -34,6 +34,19 @@ def play_music(folder,mp3_list,index):
                 pygame.mixer.music.stop()
                 print("Stopped")
                 return
+            
+            elif comm == "M":
+                if len(mp3_list)<=1:
+                    print("One one song available")
+                    continue
+                else:
+                    new_index = index
+                    while new_index==index: 
+                        new_index = random.randint(0, len(mp3_list) - 1)
+
+                    index = new_index
+                pygame.mixer.music.stop()
+                break
             
             elif comm.startswith("C "):
                     try:
@@ -59,7 +72,7 @@ def play_music(folder,mp3_list,index):
 
             else:
                 print("Invalid Command Bro...")
-        pass
+
 def main():
 
     try:
