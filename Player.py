@@ -68,33 +68,51 @@ def main():
         print(f"Audio Initialization Falied: {e}")
         return
     
-    folder = "music"
+    CONFIG_FILE = os.path.expanduser("~/.mp3configfile")
+
+    last_folder = ""
+    if os.path.exists(CONFIG_FILE):
+        with open(CONFIG_FILE, "r") as f:
+            last_folder = f.read().strip()
+
+    print("***** MP3 PLAYER *****")
+
+    if last_folder:
+        print(f"Last used folder: {last_folder}")
+        folder = input("Enter your music folder path (leave empty to reuse): ").strip()
+        if folder == "":
+            folder = last_folder
+    else:
+        folder = input("Enter your music folder path: ").strip()
+        
+    folder = os.path.expanduser(folder)
 
     if not os.path.isdir(folder):
         print(f"No folder named '{folder}' exists")
         return
     
+    with open(CONFIG_FILE, "w") as f:
+        f.write(folder)
+    
     mp3_list = [file for file in os.listdir(folder) if file.endswith(".mp3")]
 
     if not mp3_list:
-        print(f"No .mp3 file exists")
-
-    print("***** MP3 PLAYER *****")
+        print(f"No .mp3 file found in that folder")
+        return
 
     while True:
 
-        ip = input("Press L for list of songs: ")
-
-        if ip.upper() == "L":
-            print("My song list:")
-            for index,song in enumerate(mp3_list, start=1):
-                print(f"{index}. {song}")
-
-        choice_input = input("Enter song # to play (or Q to Quit): ")
+        choice_input = input("Enter song # to play, [L]ist for listing, [Q]uit to quit: ")
 
         if choice_input.upper() == "Q":
             print("Bye")
             break
+
+        elif choice_input.upper() == "L":
+            print("My song list:")
+            for index,song in enumerate(mp3_list, start=1):
+                print(f"{index}. {song}")
+            continue
 
         if not choice_input.isdigit():
             print(f"Enter a Valid Number")
